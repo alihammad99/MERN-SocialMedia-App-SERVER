@@ -2,16 +2,18 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
-import * as dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 import multer from "multer";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import authRoutes from "./routes/auth.js";
+import { register } from "./controllers/auth.js";
 
 const __fileName = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__fileName);
-dotenv.config()
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -35,7 +37,13 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* Mongoose Setup */
+/* ROUTES WITH FILES */
+app.post("/auth/register", upload.single("picture"), register);
+
+/* ROUTES */
+app.use("/auth", authRoutes);
+
+/* MONGOOSE SETUP */
 
 const PORT = process.env.PORT;
 const dbURL = process.env.MONGODB_URL;
